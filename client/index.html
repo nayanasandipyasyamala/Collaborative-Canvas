@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collaborative Canvas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="joinScreen">
+    <div class="join-card">
+      <h1>Collaborative Canvas</h1>
+      <p>Pick a name so others can see who's drawing.</p>
+      <input type="text" id="nameInput" maxlength="20" placeholder="Your name" autocomplete="off" />
+      <button id="joinBtn">Join canvas</button>
+    </div>
+  </div>
+
+  <div id="app" style="display:none;">
+    <header id="appHeader">
+      <div class="header-text">
+        <h1>Collaborative Canvas</h1>
+        <p class="tagline">Draw together, live — every stroke and cursor, in real time.</p>
+      </div>
+      <div class="status" id="status">
+        <span class="dot online"></span>
+        <span id="statusText">Solo mode — not connected</span>
+      </div>
+    </header>
+
+    <div id="workspace">
+      <aside id="sidebar">
+        <div class="tool-group">
+          <div class="group-label">Brushes</div>
+          <button id="brushBtn" class="tool-btn active" data-tool="brush" title="Pen — crisp, precise line">✏️ Pen</button>
+          <button id="markerBtn" class="tool-btn" data-tool="marker" title="Highlighter — thick, semi-transparent">🖍️ Highlighter</button>
+          <button id="paintbrushBtn" class="tool-btn" data-tool="paintbrush" title="Paintbrush — thick, soft-edged">🖌️ Paintbrush</button>
+        </div>
+
+        <div class="tool-group">
+          <div class="group-label">Erasers</div>
+          <button id="eraserBtn" class="tool-btn" data-tool="eraser" title="Pixel eraser — erases an area">🧹 Pixel eraser</button>
+          <button id="strokeEraserBtn" class="tool-btn" data-tool="stroke-eraser" title="Deletes a whole stroke at once">✂️ Stroke eraser</button>
+        </div>
+
+        <div class="tool-group">
+          <div class="group-label">Color</div>
+          <div class="color-fallback-wrap" title="Pick any color">
+            <input type="color" id="colorPicker" class="color-fallback" value="#1a1a2e" />
+          </div>
+          <div class="swatches" id="swatches"></div>
+        </div>
+
+        <div class="tool-group">
+          <div class="group-label">Size</div>
+          <input type="range" id="widthSlider" min="1" max="200" value="4" />
+          <span id="widthValue">4</span>
+        </div>
+
+        <div class="tool-group">
+          <div class="group-label">Actions</div>
+          <div class="action-row">
+            <button id="undoBtn" class="tool-btn action-half" title="Undo">↶ Undo</button>
+            <button id="redoBtn" class="tool-btn action-half" title="Redo">↷ Redo</button>
+          </div>
+          <button id="clearBtn" class="tool-btn danger" title="Clear canvas">🗑 Clear all</button>
+        </div>
+      </aside>
+
+      <main id="canvasWrap">
+        <canvas id="board"></canvas>
+        <div id="cursorLayer"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="canvas.js"></script>
+  <script src="websocket.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
