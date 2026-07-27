@@ -1,13 +1,55 @@
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const { WebSocketServer } = require('ws');
 const { RoomManager } = require('./rooms');
 
 const PORT = process.env.PORT || 8080;
 const ROOM_ID = 'main'; // single global room for now — multi-room is a bonus feature later
+const CLIENT_DIR = path.join(__dirname, '..', 'client');
+
+const MIME_TYPES = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+};
+
+// Serve the client's static files (HTML/CSS/JS) from the SAME server that
+// handles WebSockets. This means the deployed app is one unit with no
+// hardcoded cross-origin server URL to configure — the client can just
+// connect back to "wherever this page came from".
+const httpServer = http.createServer((req, res) => {
+  const urlPath = req.url.split('?')[0];
+  const relativePath = urlPath === '/' ? '/index.html' : urlPath;
+  const filePath = path.join(CLIENT_DIR, relativePath);
+
+  // Basic safety check: never serve a file outside the client directory,
+  // even if the URL tries to path-traverse out of it (e.g. "../../etc").
+  if (!filePath.startsWith(CLIENT_DIR)) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
+  }
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      res.end('Not found');
+      return;
+    }
+    const ext = path.extname(filePath);
+    res.writeHead(200, { 'Content-Type': MIME_TYPES[ext] || 'application/octet-stream' });
+    res.end(data);
+  });
+});
 
 const rooms = new RoomManager();
-const wss = new WebSocketServer({ port: PORT });
+const wss = new WebSocketServer({ server: httpServer });
 
-console.log(`WebSocket server listening on ws://localhost:${PORT}`);
+httpServer.listen(PORT, () => {
+  console.log(`Server (HTTP + WebSocket) listening on port ${PORT}`);
+});
 
 wss.on('connection', (ws) => {
   const room = rooms.getOrCreate(ROOM_ID);
