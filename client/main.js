@@ -89,7 +89,10 @@ function initApp(myName) {
   // ---- Sync client (Day 2+) ----
   // Auto-detects ws:// vs wss:// based on how the page itself was loaded.
   const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const sync = new SyncClient(`${wsProtocol}//${location.hostname}:8080`, myName);
+  // location.host already includes the port when there is one, and
+  // correctly has no port when deployed behind standard 443/80 — so this
+  // works unchanged whether we're on localhost:8080 or a real domain.
+  const sync = new SyncClient(`${wsProtocol}//${location.host}`, myName);
 
   const statusDot = document.querySelector('.dot');
   const statusText = document.getElementById('statusText');
