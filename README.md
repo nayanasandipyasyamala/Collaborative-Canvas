@@ -91,12 +91,4 @@ This app needs a host that runs a **long-lived Node process** (not a serverless/
 - 🔓 **No Authentication** — Names are self-reported and not unique/enforced.
 - 🎨 **Stroke Re-insertion Layering** — Redo re-inserts a stroke at the end of the draw order rather than its original position, which can slightly change stroke layering (z-order) in rare cases.
 
----
 
-## ⏱️ Time Spent
-
-- 📅 **Day 1:** Canvas drawing engine (brush/eraser/undo/redo, solo mode).
-- 📅 **Day 2:** WebSocket server, live multi-user sync, cursors, join screen.
-- 📅 **Day 3:** Per-user undo/redo fix, persistence, docs.
-
----
